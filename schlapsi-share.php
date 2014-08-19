@@ -8,9 +8,15 @@ Author URI:        http://schlapsi.com/
 License:           Apache License 2.0
 */
 
+function schlapsi_share_register_scripts() {
+    wp_register_style( 'schlapsi-share', plugins_url( 'css/style.css', __FILE__ ) );
+    wp_enqueue_style( 'schlapsi-share' );
+}
+add_action( 'wp_enqueue_scripts', 'schlapsi_share_register_scripts' );
+
 function schlapsi_share_buttons() {
     echo '
-    <div class="social-links">
+    <div class="schlapsi-share">
         <div class="tweet">
             <a href="https://twitter.com/share" class="twitter-share-button" data-via="aschlapsi">Tweet</a>
         </div>
