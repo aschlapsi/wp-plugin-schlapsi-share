@@ -15,16 +15,19 @@ function schlapsi_share_register_scripts() {
 add_action( 'wp_enqueue_scripts', 'schlapsi_share_register_scripts' );
 
 function schlapsi_share_buttons() {
-    echo '
+    $options = get_option( 'schlapsi_share_options' );
+    $twitter_handle = esc_attr( $options['twitter_handle'] );
+
+    ?>
     <div class="schlapsi-share">
         <div class="tweet">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-via="aschlapsi">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-via="<?php echo $twitter_handle; ?>">Tweet</a>
         </div>
         <div class="googleplus">
             <div class="g-plus" data-action="share" data-annotation="bubble"></div>
         </div>
     </div>
-    ';
+    <?php
 }
 add_action( 'tha_entry_bottom', 'schlapsi_share_buttons' );
 
@@ -45,3 +48,36 @@ function schlapsi_share_footer() {
     ';
 }
 add_action( 'wp_footer', 'schlapsi_share_footer' );
+
+function schlapsi_share_admin_init() {
+    register_setting(
+        'discussion',
+        'schlapsi_share_options',
+        'schlapsi_share_validate_options'
+    );
+
+    add_settings_field(
+        'schlapsi_share_twitter_handle',
+        'Twitter Handle',
+        'schlapsi_share_setting_input',
+        'discussion',
+        'default'
+    );
+}
+add_action( 'admin_init', 'schlapsi_share_admin_init' );
+
+function schlapsi_share_setting_input() {
+    $options = get_option( 'schlapsi_share_options' );
+    $value = $options['twitter_handle'];
+
+    ?>
+    <input id="twitter_handle" name="schlapsi_share_options[twitter_handle]" type="text"
+           value="<?php echo esc_attr( $value ); ?>"> Twitter handle to use when someone tweets a post.
+    <?php
+}
+
+function schlapsi_share_validate_options( $input ) {
+    $valid = array();
+    $valid['twitter_handle'] = sanitize_user( $input['twitter_handle'] );
+    return $valid;
+}
